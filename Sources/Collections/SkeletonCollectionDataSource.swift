@@ -49,6 +49,9 @@ extension SkeletonCollectionDataSource: UICollectionViewDataSource {
         guard let source = originalCollectionViewDataSource, source.responds(to: #selector(SkeletonCollectionViewDataSource.numSections(in:))) else {
             return 0
         }
+        if let target = (originalCollectionViewDataSource as? NSObject)?.forwardingTarget(for: #selector(SkeletonCollectionViewDataSource.numSections(in:))) as? NSObject {
+            return (target.perform(#selector(SkeletonCollectionViewDataSource.numSections(in:)), with: collectionView).takeRetainedValue() as? NSNumber)?.intValue ?? 0
+        }
         return (originalCollectionViewDataSource?.perform(#selector(SkeletonCollectionViewDataSource.numSections(in:)), with: collectionView).takeRetainedValue() as? NSNumber)?.intValue ?? 0
     }
     
