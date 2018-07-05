@@ -49,8 +49,8 @@ extension SkeletonCollectionDataSource: UICollectionViewDataSource {
         guard let source = originalCollectionViewDataSource, source.responds(to: #selector(SkeletonCollectionViewDataSource.numSections(in:))) else {
             return 0
         }
-        if let target = (originalCollectionViewDataSource as? NSObject)?.forwardingTarget(for: #selector(SkeletonCollectionViewDataSource.numSections(in:))) as? NSObject {
-            return (target.perform(#selector(SkeletonCollectionViewDataSource.numSections(in:)), with: collectionView).takeRetainedValue() as? NSNumber)?.intValue ?? 0
+        if let val = originalCollectionViewDataSource as? NSObject, let forward = val.value(forKey: "forwardTo") as? SkeletonCollectionViewDataSource {
+            return forward.numSections(in: collectionView)
         }
         return (originalCollectionViewDataSource?.perform(#selector(SkeletonCollectionViewDataSource.numSections(in:)), with: collectionView).takeRetainedValue() as? NSNumber)?.intValue ?? 0
     }
@@ -58,6 +58,9 @@ extension SkeletonCollectionDataSource: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let source = originalCollectionViewDataSource, source.responds(to: #selector(SkeletonCollectionViewDataSource.collectionSkeletonView(_:numberOfItemsInSection:))) else {
             return 0
+        }
+        if let val = originalCollectionViewDataSource as? NSObject, let forward = val.value(forKey: "forwardTo") as? SkeletonCollectionViewDataSource {
+            return forward.collectionSkeletonView(collectionView, numberOfItemsInSection:section)
         }
         return (originalCollectionViewDataSource?.perform(#selector(SkeletonCollectionViewDataSource.collectionSkeletonView(_:numberOfItemsInSection:)), with: collectionView, with: NSNumber(integerLiteral: section)).takeRetainedValue() as? NSNumber)?.intValue ?? 0
     }
