@@ -32,11 +32,7 @@ extension UICollectionView: CollectionSkeleton {
     }
     
     func addDummyDataSource() {
-        guard let originalDataSource = self.dataSource as? SkeletonCollectionViewDataSource,
-            !(originalDataSource is SkeletonCollectionDataSource)
-            else { return }
-        
-        let dataSource = SkeletonCollectionDataSource(collectionViewDataSource: originalDataSource)
+        let dataSource = SkeletonCollectionDataSource(collectionViewDataSource: self.dataSource)
         self.skeletonDataSource = dataSource
         reloadData()
     }
